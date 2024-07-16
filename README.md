@@ -1,6 +1,6 @@
 # Startup Network
 
-Welcome to the **Startup Network** - a social network application designed specifically for startups and venture capitalists. This project is built using Node.js, Express, MongoDB for the backend, and React for the frontend.
+Welcome to the **Startup Network** - a social network application designed specifically for startups and venture capitalists. This project is built using Node.js, Express, MongoDB for the backend, and React for the frontend. 
 
 ## About
 
