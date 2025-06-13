@@ -4,7 +4,7 @@ Welcome to the **Startup Network** - a social network application designed speci
  
 ## About
 
-Startup Network is a platform that allows startup enthusiasts, entrepreneurs, and professionals to connect, share ideas, and collaborate. Whether you're looking to build your network, find co-founders, or explore startup opportunities, Startup Network provides the tools and community to help you succeed.
+Startup Network is a platform that allows startup enthusiasts, entrepreneurs, and professionals to connect, share ideas, and collaborate. Whether you're looking to build your network, find co-founders, or explore startup opportunities, Startup Network provides the tools and community to help you succeed. 
 
 Visit [sunnynightsocial.com](https://sunnynightsocial.com/register) for more details and live demonstrations.
 
