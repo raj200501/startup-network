@@ -42,3 +42,39 @@ Make sure you have the following installed on your machine:
 - Node.js
 - MongoDB
 - npm or yarn
+
+## ✅ Verified Quickstart
+
+These steps were verified in this repository:
+
+```bash
+# Install backend dependencies
+npm install
+
+# Install frontend dependencies
+cd client
+npm install
+cd ..
+
+# Run a backend smoke test (starts an in-memory MongoDB)
+npm run smoke
+```
+
+To run the full stack locally (requires a running MongoDB instance):
+
+```bash
+# from the repo root
+cp .env.example .env
+npm run dev
+```
+
+## Troubleshooting
+
+- **"Configuration property 'mongoURI' is not defined"**
+  - Ensure you have either a `.env` file at the repo root (see `.env.example`) or you have `MONGO_URI`/`JWT_SECRET` set in your shell.
+- **Client fails with "Missing script: start"**
+  - Run `npm install` inside the `client/` folder to ensure the React scripts are available.
+- **MongoDB connection errors**
+  - Verify MongoDB is running locally at the URI in your `.env` file. The smoke test uses an in-memory MongoDB and does not require a local instance.
+- **npm install fails with 403**
+  - Ensure your environment allows access to the npm registry or configure your registry/proxy settings.
