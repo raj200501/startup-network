@@ -5,6 +5,7 @@ import store from './store';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 import Navbar from './components/layout/Navbar';
+import Alert from './components/alerts/Alert';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Posts from './components/posts/PostList';
@@ -24,12 +25,14 @@ const App = () => {
     <Provider store={store}>
       <Router>
         <Navbar />
+        <Alert />
         <Route exact path="/" component={Posts} />
         <section className="container">
           <Switch>
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/posts" component={Posts} />
+            <Route exact path="/dashboard" component={Posts} />
           </Switch>
         </section>
       </Router>
