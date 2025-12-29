@@ -18,7 +18,7 @@ const request = (options) =>
     req.end();
   });
 
-const waitForServer = async (port, retries = 20) => {
+const waitForServer = async (port, retries = 60, delayMs = 500) => {
   for (let attempt = 0; attempt < retries; attempt += 1) {
     try {
       const res = await request({
@@ -34,7 +34,7 @@ const waitForServer = async (port, retries = 20) => {
     } catch (err) {
       // ignore and retry
     }
-    await wait(300);
+    await wait(delayMs);
   }
   throw new Error('Server did not respond in time.');
 };
