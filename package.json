@@ -2,6 +2,10 @@
   "name": "startup-network",
   "version": "1.0.0",
   "main": "server/server.js",
+  "private": true,
+  "workspaces": [
+    "client"
+  ],
   "scripts": {
     "client": "npm --prefix client start",
     "server": "nodemon server/server.js",
@@ -9,7 +13,7 @@
     "build": "npm --prefix client run build",
     "test": "node tools/run_tests.mjs",
     "test:server": "node --test server/tests/**/*.test.js",
-    "test:client": "npm --prefix client test -- --watchAll=false",
+    "test:client": "npm --workspace client test -- --watchAll=false",
     "lint": "node tools/lint.mjs",
     "typecheck": "node tools/typecheck.mjs",
     "verify": "node tools/verify.mjs",
