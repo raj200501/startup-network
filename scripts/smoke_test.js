@@ -1,4 +1,3 @@
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const { spawn } = require('child_process');
 const http = require('http');
 const path = require('path');
@@ -41,15 +40,13 @@ const waitForServer = async (port, retries = 20) => {
 };
 
 const run = async () => {
-  const mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri('startup-network');
   const port = 5100;
 
   const serverProcess = spawn('node', [path.join('server', 'server.js')], {
     cwd: path.resolve(__dirname, '..'),
     env: {
       ...process.env,
-      MONGO_URI: mongoUri,
+      USE_IN_MEMORY_DB: 'true',
       JWT_SECRET: 'smoke-test-secret',
       PORT: String(port)
     },
@@ -69,7 +66,6 @@ const run = async () => {
     console.error(`Smoke test failed: ${err.message}`);
   } finally {
     serverProcess.kill('SIGTERM');
-    await mongoServer.stop();
     process.exit(exitCode);
   }
 };

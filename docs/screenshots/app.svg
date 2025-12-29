@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+  
+  <style>
+    .bg { fill: #0b0f1c; }
+    .panel { fill: #121a2b; stroke: #1f2a44; stroke-width: 1; }
+    .card { fill: #141f35; stroke: #223457; stroke-width: 1; }
+    .soft { fill: #18243f; }
+    .accent { fill: #4f7cff; }
+    .accent-2 { fill: #6ee7f9; }
+    .text { fill: #e6eefc; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    .muted { fill: #9bb0d3; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    .pill { fill: #23365b; }
+    .border { stroke: #273455; stroke-width: 1; }
+  </style>
+
+  <rect class="bg" width="1440" height="900" />
+  <rect class="panel" x="40" y="30" width="1360" height="70" rx="16" />
+  <text class="text" x="80" y="75" font-size="18">Founder Mission Control</text>
+  <rect class="accent" x="1220" y="50" width="150" height="36" rx="18" />
+  <text class="text" x="1252" y="73" font-size="14">New update</text>
+
+  <rect class="panel" x="40" y="120" width="300" height="740" rx="20" />
+  <text class="muted" x="80" y="180" font-size="14">Overview</text>
+  <text class="muted" x="80" y="220" font-size="14">Fundraising</text>
+  <text class="muted" x="80" y="260" font-size="14">Pipeline</text>
+  <text class="muted" x="80" y="300" font-size="14">Launch tracker</text>
+
+  <rect class="card" x="370" y="120" width="1030" height="200" rx="26" />
+  <text class="text" x="410" y="190" font-size="28">This week</text>
+  <text class="muted" x="410" y="220" font-size="16">Pipeline velocity +33%, 4 new investors in review</text>
+  <rect class="accent" x="410" y="245" width="180" height="10" rx="5" />
+  <rect class="soft" x="410" y="265" width="360" height="10" rx="5" />
+
+  <rect class="card" x="370" y="350" width="500" height="260" rx="24" />
+  <rect class="card" x="900" y="350" width="500" height="260" rx="24" />
+  <text class="text" x="410" y="400" font-size="20">Investor radar</text>
+  <text class="muted" x="410" y="430" font-size="14">12 warm intros • 5 follow ups today</text>
+  <rect class="soft" x="410" y="460" width="420" height="120" rx="16" />
+
+  <text class="text" x="940" y="400" font-size="20">Product milestones</text>
+  <text class="muted" x="940" y="430" font-size="14">Next release in 5 days</text>
+  <rect class="soft" x="940" y="460" width="420" height="120" rx="16" />
+
+  <rect class="card" x="370" y="640" width="1030" height="220" rx="24" />
+  <text class="text" x="410" y="690" font-size="20">Community pulse</text>
+  <rect class="soft" x="410" y="720" width="940" height="90" rx="18" />
+</svg>

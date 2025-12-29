@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+  
+  <style>
+    .bg { fill: #0b0f1c; }
+    .panel { fill: #121a2b; stroke: #1f2a44; stroke-width: 1; }
+    .card { fill: #141f35; stroke: #223457; stroke-width: 1; }
+    .soft { fill: #18243f; }
+    .accent { fill: #4f7cff; }
+    .accent-2 { fill: #6ee7f9; }
+    .text { fill: #e6eefc; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    .muted { fill: #9bb0d3; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    .pill { fill: #23365b; }
+    .border { stroke: #273455; stroke-width: 1; }
+  </style>
+
+  <rect class="bg" width="1440" height="900" />
+  <rect class="panel" x="120" y="120" width="1200" height="660" rx="30" />
+  <rect class="card" x="220" y="200" width="420" height="460" rx="26" />
+  <text class="text" x="270" y="270" font-size="28">Welcome back</text>
+  <text class="muted" x="270" y="305" font-size="14">Sign in to continue building</text>
+  <rect class="soft" x="270" y="340" width="320" height="40" rx="12" />
+  <rect class="soft" x="270" y="395" width="320" height="40" rx="12" />
+  <rect class="accent" x="270" y="455" width="320" height="48" rx="24" />
+  <text class="text" x="350" y="486" font-size="16">Sign in</text>
+
+  <rect class="card" x="700" y="200" width="520" height="460" rx="26" />
+  <text class="text" x="760" y="270" font-size="24">Why founders stay</text>
+  <rect class="soft" x="760" y="320" width="380" height="18" rx="9" />
+  <rect class="soft" x="760" y="360" width="350" height="18" rx="9" />
+  <rect class="soft" x="760" y="400" width="320" height="18" rx="9" />
+  <rect class="soft" x="760" y="440" width="420" height="140" rx="18" />
+</svg>
