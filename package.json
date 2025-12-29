@@ -13,6 +13,7 @@
     "lint": "node tools/lint.mjs",
     "typecheck": "node tools/typecheck.mjs",
     "verify": "node tools/verify.mjs",
+    "postinstall": "npm --prefix client install",
     "previews:svg": "node tools/generate_svg_previews.mjs",
     "preview": "node tools/preview.mjs",
     "smoke": "node scripts/smoke_test.js",
