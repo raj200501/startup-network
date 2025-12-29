@@ -3,43 +3,55 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
+import { Badge, Button, Container, useTheme } from '../../ui';
 
-const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+export const NavbarBase = ({ auth: { isAuthenticated, loading }, logout }) => {
+  const { theme, toggleTheme } = useTheme();
   const authLinks = (
-    <ul>
-      <li>
-        <a onClick={logout} href="#!">
-          <i className="fas fa-sign-out-alt"></i>{' '}
-          <span className="hide-sm">Logout</span>
-        </a>
-      </li>
-    </ul>
+    <div className="ui-nav__links">
+      <Link to="/app">Dashboard</Link>
+      <Link to="/insights">Insights</Link>
+      <Link to="/launch-plan">Launch plan</Link>
+      <Link to="/knowledge">Playbooks</Link>
+      <Link to="/posts">Updates</Link>
+      <Link to="/styleguide">Styleguide</Link>
+      <Button variant="ghost" size="sm" onClick={logout}>
+        Logout
+      </Button>
+    </div>
   );
 
   const guestLinks = (
-    <ul>
-      <li>
-        <Link to="/register">Register</Link>
-      </li>
-      <li>
-        <Link to="/login">Login</Link>
-      </li>
-    </ul>
+    <div className="ui-nav__links">
+      <Link to="/">Product</Link>
+      <Link to="/knowledge">Playbooks</Link>
+      <Link to="/styleguide">Styleguide</Link>
+      <Link to="/login">Login</Link>
+      <Link to="/register">Get started</Link>
+    </div>
   );
 
   return (
-    <nav className="navbar bg-dark">
-      <h1>
-        <Link to="/">Startup Network</Link>
-      </h1>
-      {!loading && (
-        <>{isAuthenticated ? authLinks : guestLinks}</>
-      )}
+    <nav className="ui-nav">
+      <Container>
+        <div className="ui-nav__inner">
+          <div className="ui-nav__logo">
+            <Link to="/">Startup Network</Link>
+            <Badge variant="info">v2.0</Badge>
+          </div>
+          {!loading && (isAuthenticated ? authLinks : guestLinks)}
+          <div className="ui-nav__actions">
+            <Button variant="ghost" size="sm" onClick={toggleTheme}>
+              {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            </Button>
+          </div>
+        </div>
+      </Container>
     </nav>
   );
 };
 
-Navbar.propTypes = {
+NavbarBase.propTypes = {
   logout: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };
@@ -48,4 +60,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { logout })(Navbar);
+export default connect(mapStateToProps, { logout })(NavbarBase);

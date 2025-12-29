@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const config = require('config');
-const db = config.get('mongoURI');
-
-const connectDB = async () => {
+const connectDB = async (mongoUri = config.get('mongoURI')) => {
   try {
-    await mongoose.connect(db, {
+    if (process.env.USE_IN_MEMORY_DB === 'true') {
+      console.log('Skipping MongoDB connection (in-memory store enabled).');
+      return;
+    }
+    await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true

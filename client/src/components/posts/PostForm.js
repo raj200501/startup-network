@@ -2,35 +2,36 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { addPost } from '../../actions/post';
+import { Button, Card, Input } from '../../ui';
 
 const PostForm = ({ addPost }) => {
   const [text, setText] = useState('');
 
   return (
-    <div className="post-form">
-      <div className="bg-primary p">
-        <h3>Say Something...</h3>
-      </div>
+    <Card
+      title="Share an update"
+      subtitle="Let your team know what moved the needle this week."
+      actions={<Button variant="secondary">Preview</Button>}
+      className="post-form"
+    >
       <form
-        className="form my-1"
-        onSubmit={e => {
+        className="auth-panel__stack"
+        onSubmit={(e) => {
           e.preventDefault();
           addPost({ text });
           setText('');
         }}
       >
-        <textarea
-          name="text"
-          cols="30"
-          rows="5"
-          placeholder="Create a post"
+        <Input
+          label="Update"
+          placeholder="Celebrate a win, record a metric, or share a blocker."
           value={text}
-          onChange={e => setText(e.target.value)}
+          onChange={(e) => setText(e.target.value)}
           required
-        ></textarea>
-        <input type="submit" className="btn btn-dark my-1" value="Submit" />
+        />
+        <Button type="submit">Publish update</Button>
       </form>
-    </div>
+    </Card>
   );
 };
 

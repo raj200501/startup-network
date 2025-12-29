@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
+const crypto = require('crypto');
+const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 
-const Post = require('../models/Post');
-const User = require('../models/User');
+const userRepository = require('../repositories/users');
+const postRepository = require('../repositories/posts');
+const asyncHandler = require('../middleware/asyncHandler');
+const { ApiError } = require('../lib/apiError');
+const { ensureValid } = require('../utils/validation');
 
 // @route    POST api/posts
 // @desc     Create a post
@@ -12,142 +16,129 @@ const User = require('../models/User');
 router.post(
   '/',
   [auth, [check('text', 'Text is required').not().isEmpty()]],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+  asyncHandler(async (req, res) => {
+    ensureValid(req);
+
+    const user = await userRepository.findById(req.user.id);
+
+    if (!user) {
+      throw new ApiError(404, 'user_not_found', 'User not found');
     }
 
-    try {
-      const user = await User.findById(req.user.id).select('-password');
+    const post = await postRepository.createPost({
+      text: req.body.text,
+      name: user.name,
+      avatar: user.avatar,
+      user: req.user.id
+    });
 
-      const newPost = new Post({
-        text: req.body.text,
-        name: user.name,
-        avatar: user.avatar,
-        user: req.user.id
-      });
-
-      const post = await newPost.save();
-
-      res.json(post);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
-  }
+    res.json(post);
+  })
 );
 
 // @route    GET api/posts
 // @desc     Get all posts
 // @access   Private
-router.get('/', auth, async (req, res) => {
-  try {
-    const posts = await Post.find().sort({ date: -1 });
+router.get(
+  '/',
+  auth,
+  asyncHandler(async (req, res) => {
+    const posts = await postRepository.findAll();
     res.json(posts);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+  })
+);
 
 // @route    GET api/posts/:id
 // @desc     Get post by ID
 // @access   Private
-router.get('/:id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+router.get(
+  '/:id',
+  auth,
+  asyncHandler(async (req, res) => {
+    const post = await postRepository.findById(req.params.id);
 
     if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
+      throw new ApiError(404, 'post_not_found', 'Post not found');
     }
 
     res.json(post);
-  } catch (err) {
-    console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Post not found' });
-    }
-    res.status(500).send('Server Error');
-  }
-});
+  })
+);
 
 // @route    DELETE api/posts/:id
 // @desc     Delete a post
 // @access   Private
-router.delete('/:id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+router.delete(
+  '/:id',
+  auth,
+  asyncHandler(async (req, res) => {
+    const post = await postRepository.findById(req.params.id);
 
     if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
+      throw new ApiError(404, 'post_not_found', 'Post not found');
     }
 
-    // Check user
-    if (post.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User not authorized' });
+    if (String(post.user) !== req.user.id) {
+      throw new ApiError(403, 'not_authorized', 'User not authorized');
     }
 
-    await post.remove();
+    await postRepository.remove(post);
 
     res.json({ msg: 'Post removed' });
-  } catch (err) {
-    console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Post not found' });
-    }
-    res.status(500).send('Server Error');
-  }
-});
+  })
+);
 
 // @route    PUT api/posts/like/:id
 // @desc     Like a post
 // @access   Private
-router.put('/like/:id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+router.put(
+  '/like/:id',
+  auth,
+  asyncHandler(async (req, res) => {
+    const post = await postRepository.findById(req.params.id);
 
-    // Check if the post has already been liked
+    if (!post) {
+      throw new ApiError(404, 'post_not_found', 'Post not found');
+    }
+
     if (post.likes.some((like) => like.user.toString() === req.user.id)) {
-      return res.status(400).json({ msg: 'Post already liked' });
+      throw new ApiError(400, 'already_liked', 'Post already liked');
     }
 
     post.likes.unshift({ user: req.user.id });
 
-    await post.save();
+    await postRepository.save(post);
 
     res.json(post.likes);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+  })
+);
 
 // @route    PUT api/posts/unlike/:id
 // @desc     Unlike a post
 // @access   Private
-router.put('/unlike/:id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+router.put(
+  '/unlike/:id',
+  auth,
+  asyncHandler(async (req, res) => {
+    const post = await postRepository.findById(req.params.id);
 
-    // Check if the post has not yet been liked
-    if (!post.likes.some((like) => like.user.toString() === req.user.id)) {
-      return res.status(400).json({ msg: 'Post has not yet been liked' });
+    if (!post) {
+      throw new ApiError(404, 'post_not_found', 'Post not found');
     }
 
-    // remove the like
+    if (!post.likes.some((like) => like.user.toString() === req.user.id)) {
+      throw new ApiError(400, 'not_liked', 'Post has not yet been liked');
+    }
+
     post.likes = post.likes.filter(
-      ({ user }) => user.toString() !== req.user.id
+      ({ user }) => String(user) !== req.user.id
     );
 
-    await post.save();
+    await postRepository.save(post);
 
     res.json(post.likes);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+  })
+);
 
 // @route    POST api/posts/comment/:id
 // @desc     Comment on a post
@@ -155,68 +146,69 @@ router.put('/unlike/:id', auth, async (req, res) => {
 router.post(
   '/comment/:id',
   [auth, [check('text', 'Text is required').not().isEmpty()]],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+  asyncHandler(async (req, res) => {
+    ensureValid(req);
+
+    const user = await userRepository.findById(req.user.id);
+    const post = await postRepository.findById(req.params.id);
+
+    if (!user) {
+      throw new ApiError(404, 'user_not_found', 'User not found');
     }
 
-    try {
-      const user = await User.findById(req.user.id).select('-password');
-      const post = await Post.findById(req.params.id);
-
-      const newComment = {
-        text: req.body.text,
-        name: user.name,
-        avatar: user.avatar,
-        user: req.user.id
-      };
-
-      post.comments.unshift(newComment);
-
-      await post.save();
-
-      res.json(post.comments);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+    if (!post) {
+      throw new ApiError(404, 'post_not_found', 'Post not found');
     }
-  }
+
+    const newComment = {
+      id: crypto.randomUUID(),
+      text: req.body.text,
+      name: user.name,
+      avatar: user.avatar,
+      user: req.user.id
+    };
+
+    post.comments.unshift(newComment);
+
+    await postRepository.save(post);
+
+    res.json(post.comments);
+  })
 );
 
 // @route    DELETE api/posts/comment/:id/:comment_id
 // @desc     Delete comment
 // @access   Private
-router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+router.delete(
+  '/comment/:id/:comment_id',
+  auth,
+  asyncHandler(async (req, res) => {
+    const post = await postRepository.findById(req.params.id);
 
-    // Pull out comment
+    if (!post) {
+      throw new ApiError(404, 'post_not_found', 'Post not found');
+    }
+
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
 
-    // Make sure comment exists
     if (!comment) {
-      return res.status(404).json({ msg: 'Comment does not exist' });
+      throw new ApiError(404, 'comment_not_found', 'Comment does not exist');
     }
 
-    // Check user
-    if (comment.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User not authorized' });
+    if (String(comment.user) !== req.user.id) {
+      throw new ApiError(403, 'not_authorized', 'User not authorized');
     }
 
     post.comments = post.comments.filter(
       ({ id }) => id !== req.params.comment_id
     );
 
-    await post.save();
+    await postRepository.save(post);
 
     res.json(post.comments);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+  })
+);
 
 module.exports = router;
